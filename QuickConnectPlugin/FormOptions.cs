@@ -33,9 +33,6 @@ namespace QuickConnectPlugin {
             this.textBoxWinScpPath.Text = settings.WinScpPath;
             this.textBoxWinScpPath.Select(this.textBoxWinScpPath.Text.Length, 0);
 
-            this.textBoxPsPasswdPath.Text = settings.PsPasswdPath;
-            this.textBoxPsPasswdPath.Select(this.textBoxPsPasswdPath.Text.Length, 0);
-
             // Always add empty items.
             this.comboBoxHostAddressMapFieldName.Items.Add(String.Empty);
             this.comboBoxConnectionMethodMapFieldName.Items.Add(String.Empty);
@@ -99,7 +96,6 @@ namespace QuickConnectPlugin {
             this.checkBoxDisableCLIPasswordForPutty.CheckedChanged += new EventHandler(settingsChanged);
             this.textBoxSSHClientPath.TextChanged += new EventHandler(settingsChanged);
             this.textBoxWinScpPath.TextChanged += new EventHandler(settingsChanged);
-            this.textBoxPsPasswdPath.TextChanged += new EventHandler(settingsChanged);
             this.comboBoxHostAddressMapFieldName.SelectedIndexChanged += new EventHandler(settingsChanged);
             this.comboBoxConnectionMethodMapFieldName.SelectedIndexChanged += new EventHandler(settingsChanged);
             this.comboBoxAdditionalOptionsMapFieldName.SelectedIndexChanged += new EventHandler(settingsChanged);
@@ -131,7 +127,6 @@ namespace QuickConnectPlugin {
             this.settings.AddChangePasswordMenuItem = this.checkBoxAddChangePasswordItem.Checked;
             this.settings.SSHClientPath = this.textBoxSSHClientPath.Text;
             this.settings.WinScpPath = this.textBoxWinScpPath.Text;
-            this.settings.PsPasswdPath = this.textBoxPsPasswdPath.Text;
             this.settings.HostAddressMapFieldName = (String)this.comboBoxHostAddressMapFieldName.SelectedItem;
             this.settings.ConnectionMethodMapFieldName = (String)this.comboBoxConnectionMethodMapFieldName.SelectedItem;
             this.settings.AdditionalOptionsMapFieldName = (String)this.comboBoxAdditionalOptionsMapFieldName.SelectedItem;
@@ -160,39 +155,6 @@ namespace QuickConnectPlugin {
             }
         }
 
-        private bool isPsPasswdPathValid() {
-            if (this.textBoxPsPasswdPath.Text.Length == 0) {
-                this.pictureBoxPsPasswdPathWarningIcon.Visible = false;
-                this.labelPsPasswdPathWarningMessage.Visible = false;
-                this.textBoxPsPasswdPath.BackColor = default(Color);
-                return true;
-            }
-            else {
-                this.pictureBoxPsPasswdPathWarningIcon.Visible = true;
-                this.labelPsPasswdPathWarningMessage.Visible = true;
-                if (File.Exists(this.textBoxPsPasswdPath.Text)) {
-                    if (!PsPasswdWrapper.IsPsPasswdUtility(this.textBoxPsPasswdPath.Text)) {
-                        this.labelPsPasswdPathWarningMessage.Text = String.Format("Specified file is not valid.");
-                        return false;
-                    }
-                    else if (!PsPasswdWrapper.IsSupportedVersion(this.textBoxPsPasswdPath.Text)) {
-                        this.labelPsPasswdPathWarningMessage.Text = String.Format("Only version {0} is supported.", PsPasswdWrapper.SupportedVersion);
-                        return false;
-                    }
-                    else {
-                        this.pictureBoxPsPasswdPathWarningIcon.Visible = false;
-                        this.labelPsPasswdPathWarningMessage.Visible = false;
-                        return true;
-                    }
-                }
-                else {
-                    this.pictureBoxPsPasswdPathWarningIcon.Image = global::QuickConnectPlugin.Properties.Resources.important;
-                    this.labelPsPasswdPathWarningMessage.Text = "Specified path does not exists.";
-                    return false;
-                }
-            }
-        }
-
         private void settingsChanged(Object sender, EventArgs e) {
             this.buttonApply.Enabled = validateSettings();
         }
@@ -206,7 +168,7 @@ namespace QuickConnectPlugin {
             this.pictureBoxWinScpPathWarningIcon.Visible = !isValidWinScpPath;
             this.labelWinScpPathWarningMessage.Visible = !isValidWinScpPath;
 
-            return isValidSSHClientPath && isValidWinScpPath && isPsPasswdPathValid();
+            return isValidSSHClientPath && isValidWinScpPath;
         }
 
         private void buttonConfigureSSHClientPath_Click(object sender, EventArgs e) {
@@ -243,25 +205,6 @@ namespace QuickConnectPlugin {
                 if (result == DialogResult.OK && !String.IsNullOrEmpty(openFileDialog.FileName)) {
                     this.textBoxWinScpPath.Text = openFileDialog.FileName;
                     this.textBoxWinScpPath.Select(this.textBoxWinScpPath.Text.Length, 0);
-                }
-            }
-        }
-
-        private void buttonConfigurePsPasswdPath_Click(object sender, EventArgs e) {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog()) {
-                openFileDialog.Multiselect = false;
-                if (File.Exists(this.textBoxPsPasswdPath.Text)) {
-                    openFileDialog.InitialDirectory = Path.GetDirectoryName(this.textBoxPsPasswdPath.Text);
-                    openFileDialog.FileName = Path.GetFileName(this.textBoxPsPasswdPath.Text);
-                }
-                openFileDialog.CheckFileExists = true;
-                openFileDialog.CheckPathExists = true;
-                openFileDialog.Filter = "PsPasswd executable (*.exe)|*.exe|All files (*.*)|*.*";
-                openFileDialog.Title = "Select PsPasswd Path";
-                DialogResult result = openFileDialog.ShowDialog();
-                if (result == DialogResult.OK && !String.IsNullOrEmpty(openFileDialog.FileName)) {
-                    this.textBoxPsPasswdPath.Text = openFileDialog.FileName;
-                    this.textBoxPsPasswdPath.Select(this.textBoxPsPasswdPath.Text.Length, 0);
                 }
             }
         }

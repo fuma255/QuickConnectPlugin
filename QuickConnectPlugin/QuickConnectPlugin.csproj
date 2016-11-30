@@ -43,6 +43,8 @@
       <HintPath>Resources\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
@@ -71,6 +73,11 @@
     <Compile Include="IFieldMapper.cs" />
     <Compile Include="IHasTitle.cs" />
     <Compile Include="IHostPwEntry.cs" />
+    <Compile Include="PasswordChanger\IWindowsNativePasswordChangerFactory.cs" />
+    <Compile Include="PasswordChanger\WindowsNativePasswordChangerEx.cs" />
+    <Compile Include="PasswordChanger\WindowsNativePasswordChangerFactory.cs" />
+    <Compile Include="PasswordChanger\WindowsPasswordChangerOptions.cs" />
+    <Compile Include="PasswordChanger\WindowsNativePasswordChanger.cs" />
     <Compile Include="PasswordChanger\ILinuxPasswordChanger.cs" />
     <Compile Include="PasswordChanger\ILinuxPasswordChangerFactory.cs" />
     <Compile Include="PasswordChanger\LinuxPasswordChangerExFactory.cs" />
@@ -100,6 +107,8 @@
     <Compile Include="PasswordChanger\Services\IPasswordChangerServiceFactory.cs" />
     <Compile Include="PasswordChanger\Services\PasswordChangerServiceFactory.cs" />
     <Compile Include="Extensions\PwDatabaseExtensions.cs" />
+    <Compile Include="PasswordChanger\WindowsADSIProvider.cs" />
+    <Compile Include="WindowsNativePasswordChangerExFactory.cs" />
     <Compile Include="Workers\CancelableWorker.cs" />
     <Compile Include="Workers\ICancelable.cs" />
     <Compile Include="Workers\Worker.cs" />
